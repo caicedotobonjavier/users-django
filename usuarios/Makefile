@@ -1,0 +1,18 @@
+run:
+	python manage.py runserver
+
+
+makemigartions:
+	python manage.py makemigartions
+
+
+migrate:
+	python manage.py migrate
+
+
+shell:
+	python manage.py shell_plus
+
+
+superuser:
+	python manage.py createsuperuser
