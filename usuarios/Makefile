@@ -3,7 +3,7 @@ run:
 
 
 makemigartions:
-	python manage.py makemigartions
+	python manage.py makemigrations
 
 
 migrate:

@@ -38,7 +38,8 @@ DJANGO_APPS = (
 )
 
 LOCAL_APPS = (
-
+    'applications.home',
+    'applications.users',
 )
 
 THIRD_PARTY_APPS = (
@@ -107,3 +108,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+
+AUTH_USER_MODEL = 'users.User'
