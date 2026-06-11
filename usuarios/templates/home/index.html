@@ -8,17 +8,18 @@
 <body>
     <h1>BIENVENIDO A EL SISTEMA DE USUARIOS</h1>
     <hr>
+    <h3>{{ fecha }}</h3>
 
     <b>Usuario: </b>{{user.nombres}} {{user.apellidos}}
     <hr>
 
     <ul>
         <li>
-            <a href="http://">Cerrar Sesion</a>
+            <a href="{% url 'users_app:logout' %}">Cerrar Sesion</a>
         </li>
 
         <li>
-            <a href="http://">Actualizar Datos</a>
+            <a href="{% url 'users_app:actualizar_password' %}">Actualizar Contraseña</a>
         </li>
 
         <li>

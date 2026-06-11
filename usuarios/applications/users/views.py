@@ -1,14 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 #
-from django.views.generic import CreateView, FormView
+from django.views.generic import CreateView, FormView, View
 #
 from .models import User
 #
-from .forms import UserForm, LoginForm
+from .forms import UserForm, LoginForm, ActualizarPasswordForm
 #
 from django.urls import reverse_lazy
 #
 from django.contrib.auth import login, logout, authenticate
+#
+from django.http import HttpResponse
 # Create your views here.
 
 
@@ -58,3 +60,40 @@ class UserLoginView(FormView):
 
 
         return super(UserLoginView,self).form_valid(form)
+
+
+
+class LogoutView(View):
+
+    def get(self, request):
+        
+        logout(request)
+
+        return redirect(
+            'users_app:login_usuario'
+        )
+
+
+
+class ActualizarPasswordView(FormView):
+    template_name = 'users/actualizar-contrasena.html'
+    form_class = ActualizarPasswordForm
+    success_url = reverse_lazy('users_app:login_usuario')
+
+
+    def form_valid(self, form):
+
+        usuario = User.objects.get(username=self.request.user)
+        password = form.cleaned_data['password']
+        new_password = form.cleaned_data['new_password']
+
+        auth_user = authenticate(username=usuario, password=password)
+
+        if auth_user:
+            print('Autenticado')
+            usuario.set_password(new_password)
+            usuario.save()
+        
+        logout(self.request)
+
+        return super(ActualizarPasswordView, self).form_valid(form)

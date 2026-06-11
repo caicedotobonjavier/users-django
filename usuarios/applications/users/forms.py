@@ -92,3 +92,27 @@ class LoginForm(forms.Form):
             raise forms.ValidationError('Credenciales incorrectas')
         
         return cleaned_data
+
+
+
+class ActualizarPasswordForm(forms.Form):
+
+    password = forms.CharField(
+        label='Contraseña Actual',
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={
+                'placeholder':'Ingrese contraseña actual'
+            }
+        )
+    )
+
+    new_password = forms.CharField(
+        label='Contraseña Nueva',
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={
+                'placeholder':'Ingrese contraseña nueva'
+            }
+        )
+    )
