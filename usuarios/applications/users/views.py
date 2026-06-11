@@ -4,13 +4,17 @@ from django.views.generic import CreateView, FormView, View
 #
 from .models import User
 #
-from .forms import UserForm, LoginForm, ActualizarPasswordForm
+from .forms import UserForm, LoginForm, ActualizarPasswordForm, VerificarCodigoForm
 #
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 #
 from django.contrib.auth import login, logout, authenticate
 #
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+#
+from .functions import crear_codigo
+#
+from django.core.mail import send_mail
 # Create your views here.
 
 
@@ -29,17 +33,54 @@ class CrearUsuarioView(FormView):
         apellidos = form.cleaned_data['apellidos']
         genero = form.cleaned_data['genero']
         password = form.cleaned_data['password']
+        codigo = crear_codigo()
 
-        User.objects.create_user(
+        usuario=User.objects.create_user(
             username,
             email,
             password,
             nombres=nombres,
             apellidos=apellidos,
-            genero=genero
+            genero=genero,
+            codigo=codigo
         )
 
-        return super(CrearUsuarioView, self).form_valid(form)
+        send_mail(
+            subject='Código de verificación',
+            message=f'Tu código es: {codigo}',
+            from_email=None,
+            recipient_list=[email],
+            fail_silently=False,
+        )
+
+        return HttpResponseRedirect(
+            reverse(
+                'users_app:verificar_codigo',
+                kwargs={'pk': usuario.id}
+            )
+        )
+
+
+class VerificarCodigoView(FormView):
+    template_name = 'users/verficar-codigo.html'
+    form_class = VerificarCodigoForm
+    success_url = reverse_lazy('users_app:login_usuario')
+
+
+    def get_form_kwargs(self):   
+        kwargs = super(VerificarCodigoView, self).get_form_kwargs()
+        kwargs['id_user'] = self.kwargs['pk']
+        return kwargs
+
+
+    def form_valid(self, form):
+        cod = form.cleaned_data['codigo']
+        id_user = self.kwargs['pk']
+        User.objects.filter(id=id_user).update(is_active=True)        
+        
+        return super(VerificarCodigoView, self).form_valid(form)
+
+
 
 
 

@@ -26,7 +26,7 @@ class UserManager(BaseUserManager):
             username,
             email,
             password,
-            True,
+            False,
             False,
             False, 
             **extra_fields

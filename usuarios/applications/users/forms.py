@@ -116,3 +116,34 @@ class ActualizarPasswordForm(forms.Form):
             }
         )
     )
+
+
+
+class VerificarCodigoForm(forms.Form):
+    codigo = forms.CharField(
+        label='Codigo Verificación',
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                'placeholder':'Ingrese Codigo'
+            }
+        )
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.user_id = kwargs.pop('id_user', None)
+        super().__init__(*args, **kwargs)        
+
+
+    def clean_codigo(self):
+        codigo = self.cleaned_data['codigo']
+        id_user = self.user_id
+        usuario = User.objects.get(id=id_user)
+
+        if len(codigo) < 6:
+            raise forms.ValidationError('Cantidad de caracteress incorrectos') 
+
+        if usuario.codigo != codigo:
+            raise forms.ValidationError('El codigo no es correcto')
+        
+        return codigo
